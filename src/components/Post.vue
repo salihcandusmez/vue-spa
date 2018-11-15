@@ -3,9 +3,7 @@
     <div class="card-header">
       <slot name="title"></slot>  
     </div>
-    <div class="card-body h-100">
-      {{post.body}}
-    </div>
+    <div class="card-body h-100" v-html="post.excerpt.rendered"></div>
     <div class="card-footer text-muted">
       <a href="#" class="card-link">Card link</a>
     </div>

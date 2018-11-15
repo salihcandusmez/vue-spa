@@ -2,26 +2,70 @@
   <section>
     <div class="jumbotron">
       <h1 class="display-4">Lets Login !</h1>
-      <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-      <hr class="my-4">
-      <form>
+      <p class="lead" v-if="isAuthenticated">
+        Hello Authenticated
+        <button v-on:click="logout()" class="btn btn-primary">
+          Logout
+        </button>
+      </p>
+      <form v-else>
         <div class="form-group">
-          <label for="exampleInputEmail1">Email address</label>
-          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+          <label for="exampleInputEmail1">
+            Username
+          </label>
+          <input v-model="username" type="text" class="form-control">
         </div>
         <div class="form-group">
-          <label for="exampleInputPassword1">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+          <label for="exampleInputPassword1">
+            Password
+          </label>
+          <input v-model="password" type="password" class="form-control">
         </div>
+        <button v-on:click="login()" type="button" class="btn btn-primary btn-lg">
+          Login
+        </button>
       </form>
-      <a class="btn btn-primary btn-lg" href="#" role="button">
-        Login
-      </a>
     </div>
   </section>
 </template>
 
 <script>
-export default {};
+import appService from '../services/app.service.js'
+export default {
+  data () {
+    return {
+      username: '',
+      password: '',
+      isAuthenticated: false
+    }
+  },
+  methods: {
+    login () {
+      appService.login({
+        username: this.username,
+        password: this.password
+       }).then(res => {
+        window.localStorage.setItem('token', res.token)
+        window.localStorage.setItem('tokenExpiration', res.expiration)
+        this.isAuthenticated = true
+        this.username = ''
+        this.password = ''
+       }).catch(() => {
+         window.alert('Could not login!')
+       })
+    },
+    logout () {
+      window.localStorage.setItem('token', null)
+      window.localStorage.setItem('tokenExpiration', null)
+      this.isAuthenticated = false
+    }
+  },
+  created () {
+    let expiration = window.localStorage.getItem('tokenExpiration')
+    let unixTimestamp = new Date().getTime() / 1000
+    if (expiration !== null && parseInt(expiration) - unixTimestamp > 0) {
+      this.isAuthenticated = true
+    }
+  }
+}
 </script>

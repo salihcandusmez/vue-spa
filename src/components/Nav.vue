@@ -15,7 +15,9 @@
             <router-link class="nav-link" :to="{ name: 'posts', params: { id: 'mobile' } }" exact>Mobile</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'login' }">Login</router-link >
+            <router-link class="nav-link" :to="{ name: 'login' }">
+              {{isAuthenticated ? 'Logout': 'Login'}}
+            </router-link >
           </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
@@ -27,7 +29,10 @@
   </section>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
-  
+  computed: {
+    ...mapGetters(['isAuthenticated'])
+  }
 }
 </script>

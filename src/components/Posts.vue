@@ -9,33 +9,26 @@
 <script>
 import Post from './Post'
 import appService from '../services/app.service.js'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
     Post
   },
-  data() {
-    return {
-      id: this.$route.params.id,
-      postsFrontEnd: [],
-      postsMobile: [],
-      posts: []
-    }
+  computed: {
+    ...mapGetters('postsModule', ['posts'])
   },
   methods: {
     loadPosts () {
       let postId = 2
-      if (this.id === 'mobile') {
+      if (this.$route.params.id === 'mobile') {
         postId = 11
       }
-      appService.getPosts(postId).then(data => {
-        this.posts = data
-      })
+      this.$store.dispatch('postsModule/updatePosts', postId)
     }
   },
   watch: {
     '$route' (to, from) {
-      this.id = to.params.id
       this.loadPosts()
     }
   },
